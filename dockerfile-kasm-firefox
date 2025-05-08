@@ -39,6 +39,8 @@ ENV KASM_RESTRICTED_FILE_CHOOSER=1
 COPY ./src/ubuntu/install/gtk/ $INST_SCRIPTS/gtk/
 RUN bash $INST_SCRIPTS/gtk/install_restricted_file_chooser.sh
 
+COPY ./src/ubuntu/install/firefox/policies.json /etc/firefox/policies/policies.json
+
 ######### End Customizations ###########
 
 RUN chown 1000:0 $HOME
