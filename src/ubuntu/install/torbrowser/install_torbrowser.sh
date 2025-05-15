@@ -32,7 +32,7 @@ user_pref("app.update.checkInstallTime", false);
 user_pref("app.update.background.interval", 315360000);
 user_pref("extensions.torlauncher.prompt_at_startup", false);
 user_pref("extensions.torlauncher.quickstart", true);
-user_pref("browser.download.lastDir", "/home/kasm-user/Downloads");
+user_pref("browser.download.lastDir", "/home/temp-user/Downloads");
 user_pref("torbrowser.settings.bridges.builtin_type", "");
 user_pref("torbrowser.settings.bridges.enabled", false);
 user_pref("torbrowser.settings.bridges.source", -1);

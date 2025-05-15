@@ -36,8 +36,8 @@ RUN \
   $STARTUPDIR/set_user_permission.sh $HOME && \
   rm -f /etc/X11/xinit/Xclients && \
   chown 1000:0 $HOME && \
-  mkdir -p /home/kasm-user && \
-  chown -R 1000:0 /home/kasm-user && \
+  mkdir -p /home/temp-user && \
+  chown -R 1000:0 /home/temp-user && \
   rm -Rf ${INST_DIR}
 
 # Remove desktop shortcuts
@@ -45,7 +45,7 @@ RUN rm $HOME/Desktop/*.desktop \
     && sed -i 's#inode/directory;##g' /usr/share/applications/code.desktop
 
 # Userspace Runtime
-ENV HOME /home/kasm-user
+ENV HOME /home/temp-user
 WORKDIR $HOME
 USER 1000
 

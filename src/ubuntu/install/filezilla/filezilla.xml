@@ -130,7 +130,7 @@
 		<Setting name="Drag and Drop disabled">0</Setting>
 		<Setting name="Disable update footer">0</Setting>
 		<Setting name="Master password encryptor"></Setting>
-		<Setting name="Config Location">/home/kasm-user/.config/filezilla/</Setting>
+		<Setting name="Config Location">/home/temp-user/.config/filezilla/</Setting>
 		<Setting name="Kiosk mode">0</Setting>
 		<Setting name="Disable update check">1</Setting>
 		<Setting name="Cache directory"></Setting>

@@ -20,7 +20,7 @@ useNewBigFolderSizeLimit=true
 [Accounts]
 0\Folders\1\ignoreHiddenFiles=false
 0\Folders\1\journalPath=._sync_5cbcdaef8f19.db
-0\Folders\1\localPath=/home/kasm-user/ownCloud/
+0\Folders\1\localPath=/home/temp-user/ownCloud/
 0\Folders\1\paused=false
 0\Folders\1\targetPath=/
 0\Folders\1\usePlaceholders=false

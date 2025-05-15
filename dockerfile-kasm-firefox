@@ -49,7 +49,7 @@ COPY ./src/ubuntu/install/firefox/policies.json /etc/firefox/policies/policies.j
 RUN chown 1000:0 $HOME
 RUN $STARTUPDIR/set_user_permission.sh $HOME
 
-ENV HOME /home/kasm-user
+ENV HOME /home/temp-user
 WORKDIR $HOME
 RUN mkdir -p $HOME && chown -R 1000:0 $HOME
 

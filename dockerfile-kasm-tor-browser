@@ -39,7 +39,7 @@ RUN chmod +x $STARTUPDIR/custom_startup.sh
 
 RUN chown 1000:0 $HOME
 
-ENV HOME /home/kasm-user
+ENV HOME /home/temp-user
 WORKDIR $HOME
 RUN mkdir -p $HOME && chown -R 1000:0 $HOME
 
