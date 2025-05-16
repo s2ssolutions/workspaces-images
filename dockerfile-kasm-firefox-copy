@@ -42,7 +42,7 @@ RUN grep -rl "kasm-user" $STARTUPDIR | xargs sed -i 's/kasm-user/temp-user/g'
 #COPY ./src/ubuntu/install/gtk/ $INST_SCRIPTS/gtk/
 #RUN bash $INST_SCRIPTS/gtk/install_restricted_file_chooser.sh
 
-#COPY ./src/ubuntu/install/firefox/policies.json /etc/firefox/policies/policies.json
+COPY ./src/ubuntu/install/firefox/policies.json /etc/firefox/policies/policies.json
 
 ######### End Customizations ###########
 
@@ -52,5 +52,7 @@ RUN $STARTUPDIR/set_user_permission.sh $HOME
 ENV HOME /home/temp-user
 WORKDIR $HOME
 RUN mkdir -p $HOME && chown -R 1000:0 $HOME
+
+RUN ln -sf $HOME/safe-storage $HOME/Downloads
 
 USER 1000

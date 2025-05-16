@@ -11,6 +11,8 @@ ARGS=${APP_ARGS:-$DEFAULT_ARGS}
 options=$(getopt -o gau: -l go,assign,url: -n "$0" -- "$@") || exit
 eval set -- "$options"
 
+#ln -sf /home/temp-user/safe-storage /home/temp-user/Downloads
+
 while [[ $1 != -- ]]; do
     case $1 in
         -g|--go) GO='true'; shift 1;;
