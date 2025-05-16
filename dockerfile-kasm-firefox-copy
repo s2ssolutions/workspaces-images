@@ -53,6 +53,6 @@ ENV HOME /home/temp-user
 WORKDIR $HOME
 RUN mkdir -p $HOME && chown -R 1000:0 $HOME
 
-RUN ln -sf $HOME/safe-storage $HOME/Downloads
+#RUN ln -sf $HOME/safe-storage $HOME/Downloads
 
 USER 1000
