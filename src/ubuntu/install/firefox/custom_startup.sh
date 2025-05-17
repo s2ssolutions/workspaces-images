@@ -84,8 +84,18 @@ kasm_startup() {
 
 }
 
+create_symlink() {
+    rm -rf $HOME/Downloads
+    ln -sf $HOME/safe-storage $HOME/Downloads
+}
+
 if [ -n "$GO" ] || [ -n "$ASSIGN" ] ; then
     kasm_exec
 else
     kasm_startup
 fi
+
+create_symlink
+
+
+

@@ -31,7 +31,7 @@ RUN grep -rl "kasm-user" $STARTUPDIR | xargs sed -i 's/kasm-user/temp-user/g'
 # Setup the custom startup script that will be invoked when the container starts
 #ENV LAUNCH_URL  http://kasmweb.com
 
-#COPY ./src/ubuntu/install/firefox/custom_startup.sh $STARTUPDIR/custom_startup.sh
+COPY ./src/ubuntu/install/firefox/custom_startup.sh $STARTUPDIR/custom_startup.sh
 #RUN chmod +x $STARTUPDIR/custom_startup.sh
 
 # Install Custom Certificate Authority
