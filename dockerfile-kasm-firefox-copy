@@ -43,7 +43,11 @@ RUN grep -rl "kasm-user" $STARTUPDIR | xargs sed -i 's/kasm-user/temp-user/g'
 #RUN bash $INST_SCRIPTS/gtk/install_restricted_file_chooser.sh
 
 COPY ./src/ubuntu/install/firefox/policies.json /etc/firefox/policies/policies.json
+COPY ./src/common/resources/images/SN.png /usr/local/squid/share/icons/SN.png
+RUN chown proxy:proxy /usr/local/squid/share/icons/SN.png
 
+COPY ./src/common/resources/images/bg_kasm.png  /usr/share/backgrounds/bg_kasm.png
+COPY ./src/common/resources/images/bg_kasm.png  /usr/share/backgrounds/bg_default.png
 ######### End Customizations ###########
 
 RUN chown 1000:0 $HOME
