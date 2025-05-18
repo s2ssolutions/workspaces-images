@@ -42,7 +42,10 @@ RUN chmod +x $STARTUPDIR/custom_startup.sh
 #COPY ./src/ubuntu/install/gtk/ $INST_SCRIPTS/gtk/
 #RUN bash $INST_SCRIPTS/gtk/install_restricted_file_chooser.sh
 
+### PRE INSTALL EXTENSIONS ###
 COPY ./src/ubuntu/install/firefox/policies.json /etc/firefox/policies/policies.json
+
+### REPLACE BG AND SQUID IMAGES ###
 COPY ./src/common/resources/images/SN.png /usr/local/squid/share/icons/SN.png
 RUN chown proxy:proxy /usr/local/squid/share/icons/SN.png
 
@@ -53,6 +56,7 @@ COPY ./src/common/resources/images/bg_kasm.png  /usr/share/backgrounds/bg_defaul
 RUN chown 1000:0 $HOME
 RUN $STARTUPDIR/set_user_permission.sh $HOME
 
+### CHANGE USER:GROUP NAME ###
 ENV HOME /home/temp-user
 WORKDIR $HOME
 RUN mkdir -p $HOME && chown -R 1000:0 $HOME
@@ -62,6 +66,13 @@ RUN usermod -l "temp-user" "kasm-user"
 RUN usermod -d /home/"temp-user" "temp-user"
 RUN rm -rf /home/kasm-user
 
-#RUN ln -sf $HOME/safe-storage $HOME/Downloads
+### Apply baseline ff setup ###
+COPY .src/ubuntu/install/firefox/mozilla-backup.tar.gz /tmp/mozilla-backup.tar.gz
+RUN tar -xvzf /tmp/mozilla-backup.tar.gz -C /home/temp-user/
+RUN chown -R temp-user:temp-user $HOME/.mozilla
+
+### Override default ua string ###
+RUN echo 'user_pref("general.useragent.override", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.1");' >> $HOME/.mozilla/firefox/kasm/prefs.js
+
 
 USER 1000
