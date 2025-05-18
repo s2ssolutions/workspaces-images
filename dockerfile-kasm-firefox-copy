@@ -69,6 +69,7 @@ RUN rm -rf /home/kasm-user
 ### Apply baseline ff setup ###
 COPY .src/ubuntu/install/firefox/mozilla-backup.tar.gz /tmp/mozilla-backup.tar.gz
 RUN tar -xvzf /tmp/mozilla-backup.tar.gz -C /home/temp-user/
+RUN rm /tmp/mozilla-backup.tar.gz
 RUN chown -R temp-user:temp-user $HOME/.mozilla
 
 ### Override default ua string ###
