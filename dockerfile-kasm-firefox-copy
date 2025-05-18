@@ -57,6 +57,11 @@ ENV HOME /home/temp-user
 WORKDIR $HOME
 RUN mkdir -p $HOME && chown -R 1000:0 $HOME
 
+RUN groupmod -n "temp-user" "kasm-user"
+RUN usermod -l "temp-user" "kasm-user"
+RUN usermod -d /home/"temp-user" "temp-user"
+RUN rm -rf /home/kasm-user
+
 #RUN ln -sf $HOME/safe-storage $HOME/Downloads
 
 USER 1000
