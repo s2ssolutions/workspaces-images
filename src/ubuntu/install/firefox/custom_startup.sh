@@ -53,6 +53,7 @@ kasm_exec() {
         /usr/bin/filter_ready
         /usr/bin/desktop_ready
         create_symlink
+        /dockerstartup/set_locale.sh
         bash ${MAXIMIZE_SCRIPT} &
         $START_COMMAND $ARGS $OPT_URL
     else
@@ -78,6 +79,7 @@ kasm_startup() {
                 /usr/bin/filter_ready
                 /usr/bin/desktop_ready
                 create_symlink
+                /dockerstartup/set_locale.sh
                 set +e
                 bash ${MAXIMIZE_SCRIPT} &
                 $START_COMMAND $ARGS $URL
