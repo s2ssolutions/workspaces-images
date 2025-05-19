@@ -1,0 +1,76 @@
+ARG BASE_TAG="develop"
+ARG BASE_IMAGE="terminal"
+FROM kasmweb/$BASE_IMAGE:$BASE_TAG
+USER root
+
+ENV HOME /home/kasm-default-profile
+ENV STARTUPDIR /dockerstartup
+ENV INST_SCRIPTS $STARTUPDIR/install
+WORKDIR $HOME
+
+### replace 'kasm-user' to 'temp-user' in all dockerstartup scripts ###
+RUN grep -rl "kasm-user" $STARTUPDIR | xargs sed -i 's/kasm-user/temp-user/g'
+
+
+# RUN apt-get update && apt-get install -y tmux screen nano dnsutils zip
+
+# RUN echo "set -g mouse on" > $HOME/.tmux.conf && chown 1000:1000  $HOME/.tmux.conf
+
+### Update .bashrc to run an arbitrary command if specified as an environment variable
+# RUN echo "if [ ! -z \"\${SHELL_EXEC}\" ] && [ \"\${TERM}\" == \"xterm-256color\" ] ; \n\
+# then \n\
+#     set +e \n\
+#     eval \${SHELL_EXEC} \n\
+# fi  " >> $HOME/.bashrc && chown 1000:1000  $HOME/.bashrc
+
+### Install Ansible
+# COPY ./src/ubuntu/install/ansible $INST_SCRIPTS/ansible/
+# RUN bash $INST_SCRIPTS/ansible/install_ansible.sh  && rm -rf $INST_SCRIPTS/ansible/
+
+### Install Terraform
+# COPY ./src/ubuntu/install/terraform $INST_SCRIPTS/terraform/
+# RUN bash $INST_SCRIPTS/terraform/install_terraform.sh  && rm -rf $INST_SCRIPTS/terraform/
+
+### Uninstall Ansible
+COPY ./src/ubuntu/install/terminal/uninstall_ansible.sh $INST_SCRIPTS/ansible/
+RUN bash $INST_SCRIPTS/ansible/uninstall_ansible.sh  && rm -rf $INST_SCRIPTS/ansible/
+
+### Uninstall Terraform
+COPY ./src/ubuntu/install/terminal/uninstall_terraform.sh $INST_SCRIPTS/terraform/
+RUN bash $INST_SCRIPTS/terraform/uninstall_terraform.sh  && rm -rf $INST_SCRIPTS/terraform/
+
+COPY ./src/ubuntu/install/terminal/custom_startup.sh $STARTUPDIR/custom_startup.sh
+RUN chmod +x $STARTUPDIR/custom_startup.sh
+RUN chmod 755 $STARTUPDIR/custom_startup.sh
+
+# # Update the desktop environment to be optimized for a single application
+# RUN cp $HOME/.config/xfce4/xfconf/single-application-xfce-perchannel-xml/* $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/
+# RUN cp /usr/share/backgrounds/bg_kasm.png /usr/share/backgrounds/bg_default.png
+# RUN apt-get remove -y xfce4-panel
+
+### REPLACE BG AND SQUID IMAGES ###
+COPY ./src/common/resources/images/SN.png /usr/local/squid/share/icons/SN.png
+RUN chown proxy:proxy /usr/local/squid/share/icons/SN.png
+
+COPY ./src/common/resources/images/bg_kasm.png  /usr/share/backgrounds/bg_kasm.png
+COPY ./src/common/resources/images/bg_kasm.png  /usr/share/backgrounds/bg_default.png
+######### End Customizations ###########
+
+RUN chown 1000:0 $HOME
+RUN $STARTUPDIR/set_user_permission.sh $HOME
+
+### CHANGE USER:GROUP NAME ###
+ENV HOME /home/temp-user
+WORKDIR $HOME
+RUN mkdir -p $HOME && chown -R 1000:0 $HOME
+
+RUN groupmod -n "temp-user" "kasm-user"
+RUN usermod -l "temp-user" "kasm-user"
+RUN usermod -d /home/"temp-user" "temp-user"
+RUN rm -rf /home/kasm-user
+
+### Add pwordless sudo ###
+RUN echo "temp-user ALL=(ALL) NOPASSWD:ALL, !/bin/su, !/bin/bash, !/usr/bin/*sh, !/usr/bin/python*, !/bin/sh" >> /etc/sudoers.d/temp-user && \
+    chmod 0440 /etc/sudoers.d/temp-user
+
+USER 1000
