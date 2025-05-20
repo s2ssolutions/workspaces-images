@@ -1,5 +1,5 @@
 ARG BASE_TAG="develop"
-ARG BASE_IMAGE="terminal"
+ARG BASE_IMAGE="firefox"
 FROM kasmweb/$BASE_IMAGE:$BASE_TAG
 USER root
 
@@ -12,16 +12,16 @@ WORKDIR $HOME
 RUN grep -rl "kasm-user" $STARTUPDIR | xargs sed -i 's/kasm-user/temp-user/g'
 
 
-# RUN apt-get update && apt-get install -y tmux screen nano dnsutils zip
+RUN apt-get update && apt-get install -y xfce4-terminal tmux screen nano dnsutils zip
 
-# RUN echo "set -g mouse on" > $HOME/.tmux.conf && chown 1000:1000  $HOME/.tmux.conf
+RUN echo "set -g mouse on" > $HOME/.tmux.conf && chown 1000:1000  $HOME/.tmux.conf
 
 ### Update .bashrc to run an arbitrary command if specified as an environment variable
-# RUN echo "if [ ! -z \"\${SHELL_EXEC}\" ] && [ \"\${TERM}\" == \"xterm-256color\" ] ; \n\
-# then \n\
-#     set +e \n\
-#     eval \${SHELL_EXEC} \n\
-# fi  " >> $HOME/.bashrc && chown 1000:1000  $HOME/.bashrc
+RUN echo "if [ ! -z \"\${SHELL_EXEC}\" ] && [ \"\${TERM}\" == \"xterm-256color\" ] ; \n\
+then \n\
+    set +e \n\
+    eval \${SHELL_EXEC} \n\
+fi  " >> $HOME/.bashrc && chown 1000:1000  $HOME/.bashrc
 
 ### Install Ansible
 # COPY ./src/ubuntu/install/ansible $INST_SCRIPTS/ansible/
@@ -32,13 +32,18 @@ RUN grep -rl "kasm-user" $STARTUPDIR | xargs sed -i 's/kasm-user/temp-user/g'
 # RUN bash $INST_SCRIPTS/terraform/install_terraform.sh  && rm -rf $INST_SCRIPTS/terraform/
 
 ### Uninstall Ansible
-COPY ./src/ubuntu/install/terminal/uninstall_ansible.sh $INST_SCRIPTS/ansible/
-RUN bash $INST_SCRIPTS/ansible/uninstall_ansible.sh  && rm -rf $INST_SCRIPTS/ansible/
+# COPY ./src/ubuntu/install/terminal/uninstall_ansible.sh $INST_SCRIPTS/ansible/
+# RUN bash $INST_SCRIPTS/ansible/uninstall_ansible.sh  && rm -rf $INST_SCRIPTS/ansible/
 
 ### Uninstall Terraform
-COPY ./src/ubuntu/install/terminal/uninstall_terraform.sh $INST_SCRIPTS/terraform/
-RUN bash $INST_SCRIPTS/terraform/uninstall_terraform.sh  && rm -rf $INST_SCRIPTS/terraform/
+# COPY ./src/ubuntu/install/terminal/uninstall_terraform.sh $INST_SCRIPTS/terraform/
+# RUN bash $INST_SCRIPTS/terraform/uninstall_terraform.sh  && rm -rf $INST_SCRIPTS/terraform/
 
+### Uninstall Firefox
+COPY ./src/ubuntu/install/terminal/uninstall_firefox.sh $INST_SCRIPTS/firefox/
+RUN bash $INST_SCRIPTS/firefox/uninstall_firefox.sh && rm -rf $INST_SCRIPTS/firefox/ 
+
+### Re-Add custom custom_startup.sh ###
 COPY ./src/ubuntu/install/terminal/custom_startup.sh $STARTUPDIR/custom_startup.sh
 RUN chmod +x $STARTUPDIR/custom_startup.sh
 RUN chmod 755 $STARTUPDIR/custom_startup.sh
@@ -54,6 +59,71 @@ RUN chown proxy:proxy /usr/local/squid/share/icons/SN.png
 
 COPY ./src/common/resources/images/bg_kasm.png  /usr/share/backgrounds/bg_kasm.png
 COPY ./src/common/resources/images/bg_kasm.png  /usr/share/backgrounds/bg_default.png
+
+### ADD active/passive recon tools ###
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update and install CLI-based active and passive recon tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # General Utilities
+    curl \
+    wget \
+    git \
+    unzip \
+    net-tools \
+    dnsutils \
+    whois \
+    iputils-ping \
+    traceroute \
+    jq \
+    python3 \
+    python3-pip \
+    software-properties-common \
+    # Network Scanning Tools
+    nmap \
+    masscan \
+    # enum4linux \
+    smbclient \
+    # Passive Recon Tools
+    # theharvester \
+    # sublist3r \
+    # amass \
+    # Web Recon/Enumeration Tools
+    dirb \
+    gobuster \
+    wfuzz \
+    nikto \
+    whatweb \
+    # wpscan \
+    ffuf \
+    # DNS Enumeration Tools
+    dnsenum \
+    dnsrecon \
+    fierce \
+    # SSL/TLS Analysis Tools
+    # sslyze \
+    testssl.sh \
+    # HTTP Interception/Query Tools
+    # httprobe \
+    httpie \
+    python3-requests \
+    # Socket and Networking Tools
+    netcat \
+    ncat \
+    socat \
+    # skipfish \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+### Install Python-based tools via pip
+RUN pip3 install --no-cache-dir shodan python-whois
+
+### Create a 'help' script
+COPY ./src/ubuntu/install/terminal/tools /usr/local/bin/tools
+RUN chmod +x /usr/local/bin/tools
+
+### Modify .bashrc to prompt the user to type 'help'
+RUN echo 'echo "Type \\"tools\\" to see the list of available tools."' \
+    >> /etc/bash.bashrc
 ######### End Customizations ###########
 
 RUN chown 1000:0 $HOME

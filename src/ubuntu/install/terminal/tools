@@ -1,0 +1,11 @@
+#!/bin/bash
+echo "==================== AVAILABLE TOOLS ===================="
+echo "General Utilities: curl, wget, git, iputils-ping, traceroute, jq"
+echo "Network Scanning: nmap, masscan, smbclient"
+echo "Web Recon: dirb, gobuster, wfuzz, nikto, whatweb, ffuf"
+echo "DNS Recon: whois, nslookup, dig, dnsenum, dnsrecon, fierce"
+echo "SSL/TLS Analysis: testssl"
+echo "HTTP Tools: httpie"
+echo "Socket Tools: netcat, ncat, socat"
+echo "Other Tools: shodan (via Python), python-whois"
+echo "========================================================"
