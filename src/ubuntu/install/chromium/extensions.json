@@ -1,0 +1,27 @@
+{
+    "ExtensionSettings": {
+        "*": {
+            "installation_mode": "blocked"
+        },
+        "cjpalhdlnbpafiamejdnhcphjbkeiagm": {
+            "installation_mode": "force_installed",
+            "update_url": "https://clients2.google.com/service/update2/crx",
+            "toolbar_pin" : "force_pinned"
+        },
+        "lmjnegcaeklhafolokijcfjliaokphfk": {
+            "installation_mode": "force_installed",
+            "update_url": "https://clients2.google.com/service/update2/crx",
+            "toolbar_pin" : "force_pinned"
+        },
+        "djflhoibgkdhkhhcedjiklpkjnoahfmg": {
+            "installation_mode": "force_installed",
+            "update_url": "https://clients2.google.com/service/update2/crx",
+            "toolbar_pin" : "force_pinned"
+        },
+        "haebnnbpedcbhciplfhjjkbafijpncjl": {
+            "installation_mode": "force_installed",
+            "update_url": "https://clients2.google.com/service/update2/crx",
+            "toolbar_pin" : "force_pinned"
+        }
+    }
+}
