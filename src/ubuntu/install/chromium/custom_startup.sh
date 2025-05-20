@@ -6,7 +6,7 @@ MAXIMIZE="true"
 DEFAULT_ARGS=""
 
 # Custom hardcoded user agent
-CUSTOM_USER_AGENT="--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36"
+CUSTOM_USER_AGENT="--user-agent=\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36\""
 
 # Fetch the locale
 LOCALES=$(/dockerstartup/set_locale.sh)
@@ -16,7 +16,7 @@ if [[ -z "$LOCALES" ]]; then
 fi
 
 # Add the --lang and --user-agent arguments to the default args
-DEFAULT_ARGS+=" --lang=$LOCALES $CUSTOM_USER_AGENT"
+DEFAULT_ARGS+=" --lang=\"$LOCALES\" $CUSTOM_USER_AGENT"
 
 if [[ $MAXIMIZE == 'true' ]] ; then
     DEFAULT_ARGS+=" --start-maximized"
