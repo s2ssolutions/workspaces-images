@@ -30,6 +30,11 @@ done
 
 FORCE=$2
 
+create_symlink() {
+    rm -rf $HOME/Downloads
+    ln -sf $HOME/safe-storage $HOME/Downloads
+}
+
 kasm_exec() {
     if [ -n "$OPT_URL" ] ; then
         URL=$OPT_URL
@@ -42,6 +47,7 @@ kasm_exec() {
     if [ -n "$URL" ] ; then
         /usr/bin/filter_ready
         /usr/bin/desktop_ready
+        create_symlink
         $START_COMMAND $ARGS $OPT_URL
     else
         echo "No URL specified for exec command. Doing nothing."
@@ -65,6 +71,7 @@ kasm_startup() {
             then
                 /usr/bin/filter_ready
                 /usr/bin/desktop_ready
+                create_symlink
                 set +e
                 $START_COMMAND $ARGS $URL
                 set -e

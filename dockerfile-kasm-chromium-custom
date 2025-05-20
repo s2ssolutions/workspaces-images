@@ -1,0 +1,70 @@
+ARG BASE_TAG="develop"
+ARG BASE_IMAGE="chromium"
+FROM kasmweb/$BASE_IMAGE:$BASE_TAG
+USER root
+
+ENV HOME /home/kasm-default-profile
+ENV STARTUPDIR /dockerstartup
+ENV INST_SCRIPTS $STARTUPDIR/install
+WORKDIR $HOME
+
+### Replace kasm-user > temp-user in all startup scripts ###
+RUN grep -rl "kasm-user" $STARTUPDIR | xargs sed -i 's/kasm-user/temp-user/g'
+
+######### Customize Container Here ###########
+
+# Install Chromium
+# COPY ./src/ubuntu/install/chromium $INST_SCRIPTS/chromium/
+# RUN bash $INST_SCRIPTS/chromium/install_chromium.sh && rm -rf $INST_SCRIPTS/chromium/
+
+# Update the desktop environment to be optimized for a single application
+# RUN cp $HOME/.config/xfce4/xfconf/single-application-xfce-perchannel-xml/* $HOME/.config/xfce4/xfconf/xfce-perchannel-xml/
+# RUN cp /usr/share/backgrounds/bg_kasm.png /usr/share/backgrounds/bg_default.png
+# RUN apt-get remove -y xfce4-panel
+
+# Security modifications
+# COPY ./src/ubuntu/install/misc/single_app_security.sh $INST_SCRIPTS/misc/
+# RUN  bash $INST_SCRIPTS/misc/single_app_security.sh -t && rm -rf $INST_SCRIPTS/misc/
+# COPY ./src/common/chrome-managed-policies/urlblocklist.json /etc/chromium/policies/managed/urlblocklist.json
+
+# Setup the custom startup script that will be invoked when the container starts
+#ENV LAUNCH_URL  http://kasmweb.com
+
+### Override custom-startup script ###
+COPY ./src/ubuntu/install/chromium/custom_startup.sh $STARTUPDIR/custom_startup.sh
+RUN chmod +x $STARTUPDIR/custom_startup.sh
+
+### TODO Spoof locale ###
+
+# Install Custom Certificate Authority
+# COPY ./src/ubuntu/install/certificates $INST_SCRIPTS/certificates/
+# RUN bash $INST_SCRIPTS/certificates/install_ca_cert.sh && rm -rf $INST_SCRIPTS/certificates/
+
+# ENV KASM_RESTRICTED_FILE_CHOOSER=1
+# COPY ./src/ubuntu/install/gtk/ $INST_SCRIPTS/gtk/
+# RUN bash $INST_SCRIPTS/gtk/install_restricted_file_chooser.sh
+
+### TODO PRE INSTALL EXTENSIONS ###
+
+### REPLACE BG AND SQUID IMAGES ###
+COPY ./src/common/resources/images/SN.png /usr/local/squid/share/icons/SN.png
+RUN chown proxy:proxy /usr/local/squid/share/icons/SN.png
+
+COPY ./src/common/resources/images/bg_kasm.png  /usr/share/backgrounds/bg_kasm.png
+COPY ./src/common/resources/images/bg_kasm.png  /usr/share/backgrounds/bg_default.png
+######### End Customizations ###########
+
+RUN chown 1000:0 $HOME
+RUN $STARTUPDIR/set_user_permission.sh $HOME
+
+### CHANGE USER:GROUP NAME ###
+ENV HOME /home/temp-user
+WORKDIR $HOME
+RUN mkdir -p $HOME && chown -R 1000:0 $HOME
+
+RUN groupmod -n "temp-user" "kasm-user"
+RUN usermod -l "temp-user" "kasm-user"
+RUN usermod -d /home/"temp-user" "temp-user"
+RUN rm -rf /home/kasm-user
+
+USER 1000
