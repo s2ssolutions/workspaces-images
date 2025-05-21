@@ -103,7 +103,7 @@ kasm_startup() {
                 echo "ARGS are: $ARGS"
 
                 set +e
-                $START_COMMAND $ARGS $URL
+                eval $START_COMMAND $ARGS $URL
                 set -e
             fi
             sleep 1
