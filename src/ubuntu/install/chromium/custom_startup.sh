@@ -8,15 +8,19 @@ DEFAULT_ARGS=""
 # Custom hardcoded user agent
 CUSTOM_USER_AGENT="--user-agent=\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36\""
 
+# Initialize locale; this will now be conditionally checked later
+LOCALES=""
+
 # Fetch the locale
-LOCALES=$(/dockerstartup/set_locale.sh)
-if [[ -z "$LOCALES" ]]; then
-    echo "Unable to fetch locales. Falling back to default en-US."
-    LOCALES="en-US"
-fi
+# LOCALES=$(/dockerstartup/set_locale.sh)
+# if [[ -z "$LOCALES" ]]; then
+#     echo "Unable to fetch locales. Falling back to default en-US."
+#     LOCALES="en-US"
+# fi
 
 # Add the --lang and --user-agent arguments to the default args
-DEFAULT_ARGS+=" --lang=\"$LOCALES\" $CUSTOM_USER_AGENT"
+# DEFAULT_ARGS+=" --accept-lang=$LOCALES $CUSTOM_USER_AGENT"
+DEFAULT_ARGS+=" $CUSTOM_USER_AGENT"
 
 if [[ $MAXIMIZE == 'true' ]] ; then
     DEFAULT_ARGS+=" --start-maximized"
@@ -62,7 +66,16 @@ kasm_exec() {
         /usr/bin/filter_ready
         /usr/bin/desktop_ready
         create_symlink
-        $START_COMMAND $ARGS $OPT_URL
+
+        LOCALES=$(/dockerstartup/set_locale.sh)
+        if [[ -z "$LOCALES" ]]; then
+            echo "Unable to fetch locales. Falling back to default en-US."
+            LOCALES="en-US"
+        fi
+
+        ARGS+=" --accept-lang=$LOCALES"
+
+        eval $START_COMMAND $ARGS $OPT_URL
     else
         echo "No URL specified for exec command. Doing nothing."
     fi
@@ -78,17 +91,28 @@ kasm_startup() {
     if [ -z "$DISABLE_CUSTOM_STARTUP" ] ||  [ -n "$FORCE" ] ; then
 
         echo "Entering process startup loop"
-        set +x
-        while true                                                                                                                                                  
+        # set +x
+        while true
         do
             if ! pgrep -x $PGREP > /dev/null
             then
                 /usr/bin/filter_ready
                 /usr/bin/desktop_ready
-                create_symlink                                                                                                                                                                              
-                set +e                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-                $START_COMMAND $ARGS $URL
-                set -e                                                                                      
+                create_symlink
+
+                LOCALES=$(/dockerstartup/set_locale.sh)
+                if [[ $? -ne 0 || -z "$LOCALES" ]]; then
+                    echo "Unable to fetch locales. Falling back to default en-US."
+                    LOCALES="en-US"
+                else
+                    echo "Locales resolved to: $LOCALES"
+                fi
+
+                ARGS+=" --accept-lang=$LOCALES"
+                echo "ARGS are: $ARGS"
+                set +e
+                eval $START_COMMAND $ARGS $URL
+                set -e 
             fi
             sleep 1
         done

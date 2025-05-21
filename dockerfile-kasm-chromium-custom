@@ -48,7 +48,7 @@ RUN chmod +x $STARTUPDIR/set_locale.sh
 # RUN bash $INST_SCRIPTS/gtk/install_restricted_file_chooser.sh
 
 ### TODO PRE INSTALL EXTENSIONS ###
-COPY ./src/ubuntu/install/chromium/extensions.json /etc/opt/chrome/policies/managed/extensions.json
+COPY ./src/ubuntu/install/chromium/extensions.json /etc/chromium/policies/managed/extensions.json
 
 ### REPLACE BG AND SQUID IMAGES ###
 COPY ./src/common/resources/images/SN.png /usr/local/squid/share/icons/SN.png
