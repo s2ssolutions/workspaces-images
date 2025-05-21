@@ -5,6 +5,14 @@ PGREP="brave"
 MAXIMIZE="true"
 DEFAULT_ARGS=""
 
+# Custom hardcoded user agent
+CUSTOM_USER_AGENT="--user-agent=\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36\""
+
+# Initialize locale; this will be conditionally checked later
+LOCALES=""
+
+DEFAULT_ARGS+=" $CUSTOM_USER_AGENT"
+
 if [[ $MAXIMIZE == 'true' ]] ; then
     DEFAULT_ARGS+=" --start-maximized"
 fi
@@ -30,6 +38,11 @@ done
 
 FORCE=$2
 
+create_symlink() {
+    rm -rf $HOME/Downloads
+    ln -sf $HOME/safe-storage $HOME/Downloads
+}
+
 kasm_exec() {
     if [ -n "$OPT_URL" ] ; then
         URL=$OPT_URL
@@ -42,7 +55,17 @@ kasm_exec() {
     if [ -n "$URL" ] ; then
         /usr/bin/filter_ready
         /usr/bin/desktop_ready
-        $START_COMMAND $ARGS $OPT_URL
+        create_symlink
+
+        LOCALES=$(/dockerstartup/set_locale.sh)
+        if [[ -z "$LOCALES" ]]; then
+            echo "Unable to fetch locales. Falling back to default en-US."
+            LOCALES="en-US"
+        fi
+
+        ARGS+=" --accept-lang=$LOCALES"
+
+        eval $START_COMMAND $ARGS $OPT_URL
     else
         echo "No URL specified for exec command. Doing nothing."
     fi
@@ -65,8 +88,22 @@ kasm_startup() {
             then
                 /usr/bin/filter_ready
                 /usr/bin/desktop_ready
+
+                create_symlink
+
+                LOCALES=$(/dockerstartup/set_locale.sh)
+                if [[ $? -ne 0 || -z "$LOCALES" ]]; then
+                    echo "Unable to fetch locales. Falling back to default en-US."
+                    LOCALES="en-US"
+                else
+                    echo "Locales resolved to: $LOCALES"
+                fi
+
+                ARGS+=" --accept-lang=$LOCALES"
+                echo "ARGS are: $ARGS"
+
                 set +e
-                $START_COMMAND $ARGS $URL
+                eval $START_COMMAND $ARGS $URL
                 set -e
             fi
             sleep 1

@@ -1,0 +1,199 @@
+#!/bin/bash
+
+# Function to fetch the alpha-2 country code using ip-api.com
+get_country_code() {
+    curl -s http://ip-api.com/json | grep -oP '(?<="countryCode":")[^"]*'
+}
+
+# Comprehensive mapping of alpha-2 country codes to locale language codes
+declare -A COUNTRY_LOCALES=(
+    # Format: ["<alpha2>"]="<primary_locale>, <secondary_locale>"
+    ["AF"]="fa,ps"       # Afghanistan
+    ["AL"]="sq"          # Albania
+    ["DZ"]="ar"          # Algeria
+    ["AS"]="en"          # American Samoa
+    ["AD"]="ca"          # Andorra
+    ["AO"]="pt"          # Angola
+    ["AI"]="en"          # Anguilla
+    ["AG"]="en"          # Antigua and Barbuda
+    ["AR"]="es-AR"       # Argentina
+    ["AM"]="hy"          # Armenia
+    ["AW"]="nl"          # Aruba
+    ["AU"]="en-AU"       # Australia
+    ["AT"]="de-AT"       # Austria
+    ["AZ"]="az"          # Azerbaijan
+    ["BS"]="en"          # Bahamas
+    ["BH"]="ar"          # Bahrain
+    ["BD"]="bn-BD"       # Bangladesh
+    ["BB"]="en"          # Barbados
+    ["BY"]="be,ru"       # Belarus
+    ["BE"]="nl-BE,fr-BE" # Belgium
+    ["BZ"]="en,es"       # Belize
+    ["BJ"]="fr"          # Benin
+    ["BM"]="en"          # Bermuda
+    ["BT"]="dz"          # Bhutan
+    ["BO"]="es,qu"       # Bolivia
+    ["BA"]="bs,hr,sr"    # Bosnia and Herzegovina
+    ["BW"]="en,tn"       # Botswana
+    ["BR"]="pt-BR"       # Brazil
+    ["BN"]="ms"          # Brunei
+    ["BG"]="bg"          # Bulgaria
+    ["BF"]="fr"          # Burkina Faso
+    ["BI"]="fr,rn"       # Burundi
+    ["KH"]="km"          # Cambodia
+    ["CM"]="fr,en"       # Cameroon
+    ["CA"]="en-CA,fr-CA" # Canada
+    ["CV"]="pt"          # Cape Verde
+    ["CF"]="fr,sg"       # Central African Republic
+    ["TD"]="ar,fr"       # Chad
+    ["CL"]="es-CL"       # Chile
+    ["CN"]="zh-CN"       # China
+    ["CO"]="es-CO"       # Colombia
+    ["KM"]="ar,fr"       # Comoros
+    ["CG"]="fr"          # Congo
+    ["CD"]="fr"          # Congo, DRC
+    ["CR"]="es-CR"       # Costa Rica
+    ["CI"]="fr"          # Côte d'Ivoire
+    ["HR"]="hr"          # Croatia
+    ["CU"]="es-CU"       # Cuba
+    ["CY"]="el,tr"       # Cyprus
+    ["CZ"]="cs"          # Czechia
+    ["DK"]="da-DK"       # Denmark
+    ["DJ"]="ar,fr"       # Djibouti
+    ["DM"]="en"          # Dominica
+    ["DO"]="es-DO"       # Dominican Republic
+    ["EC"]="es-EC"       # Ecuador
+    ["EG"]="ar"          # Egypt
+    ["SV"]="es-SV"       # El Salvador
+    ["GQ"]="es,fr"       # Equatorial Guinea
+    ["ER"]="ti,en"       # Eritrea
+    ["EE"]="et"          # Estonia
+    ["SZ"]="en,ss"       # Eswatini
+    ["ET"]="am,ti"       # Ethiopia
+    ["FJ"]="en"          # Fiji
+    ["FI"]="fi,sv"       # Finland
+    ["FR"]="fr-FR"       # France
+    ["GA"]="fr"          # Gabon
+    ["GM"]="en"          # Gambia
+    ["GE"]="ka"          # Georgia
+    ["DE"]="de-DE"       # Germany
+    ["GH"]="en"          # Ghana
+    ["GR"]="el"          # Greece
+    ["GD"]="en"          # Grenada
+    ["GT"]="es-GT"       # Guatemala
+    ["GN"]="fr"          # Guinea
+    ["GW"]="pt"          # Guinea-Bissau
+    ["GY"]="en"          # Guyana
+    ["HT"]="fr,ht"       # Haiti
+    ["HN"]="es-HN"       # Honduras
+    ["HK"]="zh-HK,en-HK" # Hong Kong
+    ["HU"]="hu"          # Hungary
+    ["IS"]="is"          # Iceland
+    ["IN"]="hi-IN,en-IN" # India
+    ["ID"]="id"          # Indonesia
+    ["IR"]="fa"          # Iran
+    ["IQ"]="ar,ku"       # Iraq
+    ["IE"]="en-IE"       # Ireland
+    ["IL"]="he,en"       # Israel
+    ["IT"]="it-IT"       # Italy
+    ["JM"]="en"          # Jamaica
+    ["JP"]="ja-JP"       # Japan
+    ["JO"]="ar"          # Jordan
+    ["KZ"]="kk,ru"       # Kazakhstan
+    ["KE"]="en,sw"       # Kenya
+    ["KP"]="ko"          # North Korea
+    ["KR"]="ko"          # South Korea
+    ["KW"]="ar"          # Kuwait
+    ["KG"]="ky,ru"       # Kyrgyzstan
+    ["LA"]="lo"          # Laos
+    ["LV"]="lv"          # Latvia
+    ["LB"]="ar,fr"       # Lebanon
+    ["LS"]="en,st"       # Lesotho
+    ["LR"]="en"          # Liberia
+    ["LY"]="ar"          # Libya
+    ["LI"]="de"          # Liechtenstein
+    ["LT"]="lt"          # Lithuania
+    ["LU"]="fr,de,lb"    # Luxembourg
+    ["MO"]="zh,pt"       # Macao
+    ["MG"]="fr"          # Madagascar
+    ["MW"]="en"          # Malawi
+    ["MY"]="ms"          # Malaysia
+    ["MV"]="dv"          # Maldives
+    ["ML"]="fr"          # Mali
+    ["MT"]="mt,en"       # Malta
+    ["MH"]="en"          # Marshall Islands
+    ["MQ"]="fr"          # Martinique
+    ["MR"]="ar,fr"       # Mauritania
+    ["MU"]="en"          # Mauritius
+    ["MX"]="es-MX"       # Mexico
+    ["FM"]="en"          # Micronesia
+    ["MD"]="ro"          # Moldova
+    ["MC"]="fr"          # Monaco
+    ["MN"]="mn"          # Mongolia
+    ["ME"]="sr"          # Montenegro
+    ["MA"]="ar"          # Morocco
+    ["MZ"]="pt"          # Mozambique
+    ["MM"]="my"          # Myanmar
+    ["NA"]="en"          # Namibia
+    ["NP"]="ne"          # Nepal
+    ["NL"]="nl,nl-NL"    # Netherlands
+    ["NZ"]="en-NZ"       # New Zealand
+    ["NI"]="es-NI"       # Nicaragua
+    ["NE"]="fr"          # Niger
+    ["NG"]="en"          # Nigeria
+    ["NO"]="no"          # Norway
+    ["OM"]="ar"          # Oman
+    ["PK"]="ur,en"       # Pakistan
+    ["PW"]="en"          # Palau
+    ["PS"]="ar,en"       # Palestine
+    ["PA"]="es-PA"       # Panama
+    ["PG"]="en"          # Papua New Guinea
+    ["PY"]="es,gn"       # Paraguay
+    ["PE"]="es,qu"       # Peru
+    ["PH"]="en,tl"       # Philippines
+    ["PL"]="pl-PL"       # Poland
+    ["PT"]="pt-PT"       # Portugal
+    ["QA"]="ar"          # Qatar
+    ["RO"]="ro-RO"       # Romania
+    ["RU"]="ru-RU"       # Russia
+    ["RW"]="rw,en"       # Rwanda
+    ["SA"]="ar"          # Saudi Arabia
+    ["SN"]="fr"          # Senegal
+    ["RS"]="sr"          # Serbia
+    ["SG"]="en-SG,zh-SG" # Singapore
+    ["SK"]="sk-SK"       # Slovakia
+    ["SI"]="sl"          # Slovenia
+    ["ZA"]="en-ZA,af"    # South Africa
+    ["ES"]="es-ES"       # Spain
+    ["LK"]="si"          # Sri Lanka
+    ["SE"]="sv-SE"       # Sweden
+    ["CH"]="de,fr,it"    # Switzerland
+    ["SY"]="ar,sr"       # Syria
+    ["TW"]="zh-TW"       # Taiwan
+    ["TZ"]="sw,en"       # Tanzania
+    ["TH"]="th-TH"       # Thailand
+    ["TR"]="tr-TR"       # Turkey
+    ["UG"]="en,sw"       # Uganda
+    ["UA"]="uk-UA"       # Ukraine
+    ["AE"]="ar,en"       # UAE
+    ["GB"]="en-GB"       # UK
+    ["US"]="en-US"       # United States
+    ["UY"]="es-UY"       # Uruguay
+    ["UZ"]="uz,ru"       # Uzbekistan
+    ["VE"]="es-VE"       # Venezuela
+    ["VN"]="vi-VN"       # Vietnam
+    ["ZW"]="en"          # Zimbabwe
+)
+
+
+# Main logic
+COUNTRY_CODE=$(get_country_code)
+LOCALES=${COUNTRY_LOCALES[$COUNTRY_CODE]}
+
+if [[ -z "$LOCALES" ]]; then
+    echo "No locale mapping found for country code: $COUNTRY_CODE"
+    exit 1
+fi
+
+# Output the locales to be used by the Chromium startup script
+echo "$LOCALES"
