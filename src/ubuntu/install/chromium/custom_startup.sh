@@ -8,18 +8,9 @@ DEFAULT_ARGS=""
 # Custom hardcoded user agent
 CUSTOM_USER_AGENT="--user-agent=\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36\""
 
-# Initialize locale; this will now be conditionally checked later
+# Initialize locale; this will be conditionally checked later
 LOCALES=""
 
-# Fetch the locale
-# LOCALES=$(/dockerstartup/set_locale.sh)
-# if [[ -z "$LOCALES" ]]; then
-#     echo "Unable to fetch locales. Falling back to default en-US."
-#     LOCALES="en-US"
-# fi
-
-# Add the --lang and --user-agent arguments to the default args
-# DEFAULT_ARGS+=" --accept-lang=$LOCALES $CUSTOM_USER_AGENT"
 DEFAULT_ARGS+=" $CUSTOM_USER_AGENT"
 
 if [[ $MAXIMIZE == 'true' ]] ; then
