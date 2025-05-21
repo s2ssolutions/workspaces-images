@@ -30,7 +30,11 @@ FORCE=$2
 
 create_symlink() {
     rm -rf $HOME/Downloads
+    rm -rf $HOME/Documents
+    rm -rf $HOME/Pictures
     ln -sf $HOME/safe-storage $HOME/Downloads
+    ln -sf $HOME/safe-storage $HOME/Documents
+    ln -sf $HOME/safe-storage $HOME/Pictures
 }
 
 kasm_exec() {
