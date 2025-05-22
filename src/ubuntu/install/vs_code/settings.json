@@ -1,0 +1,43 @@
+{
+
+    "files.autoSave": "afterDelay",
+
+    "security.workspace.trust.banner": "never",
+    "security.workspace.trust.enabled": false,
+
+
+    "telemetry.feedback.enabled": false,
+    "telemetry.telemetryLevel": "off", // Newer versions effectively disable all telemetry when set to "off".
+
+    // Disable Notifications and Tips
+    "workbench.startupEditor": "none", // Don't show the welcome page at startup.
+    "workbench.tips.enabled": false,
+
+    // Disable User/Account/Profile Features
+    "workbench.enableExperiments": false, // Disable remote experiments.
+
+    // Disable Chat and Copilot Features
+    "chat.commandCenter.enabled": false,
+    "chat.extensionTools.enabled": false,
+    "chat.focusWindowOnConfirmation": false,
+    "chat.setupFromDialog": false,
+    "chat.agent.enabled": false,
+
+    // Disable Proactive Prompts (for extensions or workspace features)
+    "extensions.autoCheckUpdates": false, // Disable checking for extension updates automatically.
+    "extensions.autoUpdate": false, // Disable automatic extension updates.
+    "extensions.ignoreRecommendations": true, // Completely ignore extension recommendations.
+    "update.mode": "manual", // Prevent automatic updates to VSCode itself.
+
+
+    // Restrict Security/Privacy-Related Scenarios
+    "http.proxySupport": "off", // Disable proxy support.
+    "json.schemaDownload.enable": false, // Disable downloading of schemas for JSON files.
+    "http.systemCertificates": false, // Prevent the use of system CA certificates.
+
+    // Disable Suggestion/Auto-Completion Widgets
+    "editor.suggest.showIcons": false, // Hide icons in autocomplete.
+    "editor.suggest.showStatusBar": false, // Turn off the status bar for suggested completions.
+    "editor.inlineSuggest.enabled": false // Disable inline suggestions.
+
+}

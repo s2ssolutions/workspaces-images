@@ -28,6 +28,15 @@ done
 
 FORCE=$2
 
+create_symlink() {
+    rm -rf $HOME/Downloads
+    rm -rf $HOME/Documents
+    rm -rf $HOME/Pictures
+    ln -sf $HOME/safe-storage $HOME/Downloads
+    ln -sf $HOME/safe-storage $HOME/Documents
+    ln -sf $HOME/safe-storage $HOME/Pictures
+}
+
 kasm_exec() {
     if [ -n "$OPT_URL" ] ; then
         URL=$OPT_URL
@@ -40,6 +49,7 @@ kasm_exec() {
     if [ -n "$URL" ] ; then
         /usr/bin/filter_ready
         /usr/bin/desktop_ready
+        create_symlink
         bash ${MAXIMIZE_SCRIPT} &
         $START_COMMAND $ARGS $OPT_URL
     else
@@ -64,6 +74,7 @@ kasm_startup() {
             then
                 /usr/bin/filter_ready
                 /usr/bin/desktop_ready
+                create_symlink
                 set +e
                 bash ${MAXIMIZE_SCRIPT} &
                 $START_COMMAND $ARGS $URL
