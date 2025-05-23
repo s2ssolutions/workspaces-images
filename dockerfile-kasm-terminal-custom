@@ -78,6 +78,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     jq \
     python3 \
     python3-pip \
+    python3-venv \
     software-properties-common \
     # Network Scanning Tools
     nmap \
@@ -140,7 +141,7 @@ RUN usermod -d /home/"temp-user" "temp-user"
 RUN rm -rf /home/kasm-user
 
 ### Add pwordless sudo ###
-RUN echo "temp-user ALL=(ALL) NOPASSWD:ALL, !/bin/su, !/bin/bash, !/usr/bin/*sh, !/usr/bin/python*, !/bin/sh" >> /etc/sudoers.d/temp-user && \
+RUN echo "temp-user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/temp-user && \
     chmod 0440 /etc/sudoers.d/temp-user
 
 USER 1000

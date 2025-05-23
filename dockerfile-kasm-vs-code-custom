@@ -39,6 +39,62 @@ COPY ./src/common/resources/images/bg_kasm.png  /usr/share/backgrounds/bg_defaul
 RUN echo "alias python='python3'" >> $HOME/.bashrc
 COPY ./src/ubuntu/install/vs_code/settings.json $HOME/.config/Code/User/settings.json
 
+### ADD active/passive recon tools ###
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update and install CLI-based active and passive recon tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # General Utilities
+    curl \
+    wget \
+    git \
+    unzip \
+    net-tools \
+    dnsutils \
+    whois \
+    iputils-ping \
+    traceroute \
+    jq \
+    python3 \
+    python3-pip \
+    python3-venv \
+    software-properties-common \
+    # Network Scanning Tools
+    nmap \
+    masscan \
+    # enum4linux \
+    smbclient \
+    # Passive Recon Tools
+    # theharvester \
+    # sublist3r \
+    # amass \
+    # Web Recon/Enumeration Tools
+    dirb \
+    gobuster \
+    wfuzz \
+    nikto \
+    whatweb \
+    # wpscan \
+    ffuf \
+    # DNS Enumeration Tools
+    dnsenum \
+    dnsrecon \
+    fierce \
+    # SSL/TLS Analysis Tools
+    # sslyze \
+    testssl.sh \
+    # HTTP Interception/Query Tools
+    # httprobe \
+    httpie \
+    python3-requests \
+    # Socket and Networking Tools
+    netcat \
+    ncat \
+    socat \
+    # skipfish \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+
 ######### End Customizations ###########
 
 RUN chown 1000:0 $HOME
@@ -55,7 +111,7 @@ RUN usermod -d /home/"temp-user" "temp-user"
 RUN rm -rf /home/kasm-user
 
 ### Add pwordless sudo ###
-RUN echo "temp-user ALL=(ALL) NOPASSWD:ALL, !/bin/su, !/bin/bash, !/usr/bin/*sh, !/usr/bin/python*, !/bin/sh" >> /etc/sudoers.d/temp-user && \
+RUN echo "temp-user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/temp-user && \
     chmod 0440 /etc/sudoers.d/temp-user
     
 USER 1000
