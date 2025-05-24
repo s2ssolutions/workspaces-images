@@ -133,7 +133,8 @@ USER 1000
 ### Pre-install vscode extensions ###
 RUN code --install-extension ms-python.python
 # Add /home/my-user/.local/bin to PATH
-RUN echo 'export PATH="/home/temp-user/.local/bin:$PATH"' >> ~/.bashrc
+# RUN echo 'export PATH="/home/temp-user/.local/bin:$PATH"' >> ~/.bashrc
+ENV PATH="$HOME/.local/bin:$PATH"
 
 RUN pip install playwright
 RUN /home/temp-user/.local/bin/playwright install
