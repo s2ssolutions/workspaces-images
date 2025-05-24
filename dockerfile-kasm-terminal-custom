@@ -12,7 +12,7 @@ WORKDIR $HOME
 RUN grep -rl "kasm-user" $STARTUPDIR | xargs sed -i 's/kasm-user/temp-user/g'
 
 
-RUN apt-get update && apt-get install -y xfce4-terminal tmux screen nano dnsutils zip
+RUN apt-get update && apt-get install -y xfce4-terminal tmux screen dnsutils zip
 
 RUN echo "set -g mouse on" > $HOME/.tmux.conf && chown 1000:1000  $HOME/.tmux.conf
 

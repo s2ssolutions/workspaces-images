@@ -92,6 +92,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ncat \
     socat \
     # skipfish \
+    # playwright dependencies \
+    libgtk-4-1 \
+    libgraphene-1.0-0 \
+    woff2 \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-bad \
+    libwebpdemux2 \
+    libavif13 \
+    libharfbuzz-icu0 \
+    libenchant-2-2 \
+    libhyphen0 \
+    libmanette-0.2-0 \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 
@@ -113,7 +125,16 @@ RUN rm -rf /home/kasm-user
 ### Add pwordless sudo ###
 RUN echo "temp-user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/temp-user && \
     chmod 0440 /etc/sudoers.d/temp-user
+
+
     
 USER 1000
 
+### Pre-install vscode extensions ###
+RUN code --install-extension ms-python.python
+# Add /home/my-user/.local/bin to PATH
+RUN echo 'export PATH="/home/temp-user/.local/bin:$PATH"' >> ~/.bashrc
+
+RUN pip install playwright
+RUN /home/temp-user/.local/bin/playwright install
 
