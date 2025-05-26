@@ -56,31 +56,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # # Update and install CLI-based active and passive recon tools
 RUN apt-get update && apt-get full-upgrade -y && apt-get install -y --no-install-recommends \
-#     # General Utilities
-#     curl \
-#     wget \
-#     git \
-#     unzip \
-#     net-tools \
-#     dnsutils \
-#     whois \
-#     iputils-ping \
-#     traceroute \
-#     jq \
-#     python3.13-pip \
-#     python3.13-venv \
-#     # playwright dependencies \
-#     libgtk-4-1 \
-#     libgraphene-1.0-0 \
-#     woff2 \
-#     gstreamer1.0-plugins-base \
-#     gstreamer1.0-plugins-bad \
-#     libwebpdemux2 \
-#     libavif13 \
-#     libharfbuzz-icu0 \
-#     libenchant-2-2 \
-#     libhyphen0 \
-#     libmanette-0.2-0 \
     python3.13-venv \
     python3-pip \
     pipx \
