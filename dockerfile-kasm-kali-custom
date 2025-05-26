@@ -48,6 +48,45 @@ RUN grep -rl "kasm-user" $STARTUPDIR | xargs sed -i 's/kasm-user/temp-user/g'
 COPY ./src/common/resources/images/SN.png /usr/local/squid/share/icons/SN.png
 RUN chown proxy:proxy /usr/local/squid/share/icons/SN.png
 
+# Update kali PGP keys
+RUN wget https://archive.kali.org/archive-keyring.gpg -O /usr/share/keyrings/kali-archive-keyring.gpg
+
+### ADD active/passive recon tools ###
+ENV DEBIAN_FRONTEND=noninteractive
+
+# # Update and install CLI-based active and passive recon tools
+RUN apt-get update && apt-get full-upgrade -y && apt-get install -y --no-install-recommends \
+#     # General Utilities
+#     curl \
+#     wget \
+#     git \
+#     unzip \
+#     net-tools \
+#     dnsutils \
+#     whois \
+#     iputils-ping \
+#     traceroute \
+#     jq \
+#     python3.13-pip \
+#     python3.13-venv \
+#     # playwright dependencies \
+#     libgtk-4-1 \
+#     libgraphene-1.0-0 \
+#     woff2 \
+#     gstreamer1.0-plugins-base \
+#     gstreamer1.0-plugins-bad \
+#     libwebpdemux2 \
+#     libavif13 \
+#     libharfbuzz-icu0 \
+#     libenchant-2-2 \
+#     libhyphen0 \
+#     libmanette-0.2-0 \
+    python3.13-venv \
+    python3-pip \
+    pipx \
+    tor \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 RUN chown 1000:0 $HOME
 RUN $STARTUPDIR/set_user_permission.sh $HOME
 
@@ -60,6 +99,17 @@ RUN groupmod -n "temp-user" "kasm-user"
 RUN usermod -l "temp-user" "kasm-user"
 RUN usermod -d /home/"temp-user" "temp-user"
 RUN rm -rf /home/kasm-user
+
+### Add pwordless sudo ###
+RUN echo "temp-user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/temp-user && \
+    chmod 0440 /etc/sudoers.d/temp-user
+
 USER 1000
+
+ENV PATH="$HOME/.local/bin:$PATH"
+
+RUN pipx install playwright
+# RUN /home/temp-user/.local/bin/playwright install
+RUN playwright install
 
 CMD ["--tail-log"]
