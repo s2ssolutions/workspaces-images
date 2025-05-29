@@ -69,11 +69,10 @@ RUN groupmod -n "temp-user" "kasm-user"
 RUN usermod -l "temp-user" "kasm-user"
 RUN usermod -d /home/"temp-user" "temp-user"
 RUN rm -rf /home/kasm-user
-
-USER 1000
-
 COPY ./src/ubuntu/install/dind_rootless/docker-compose.yaml $HOME/docker-compose.yaml
 RUN chown temp-user:temp-user $HOME/docker-compose.yaml
 # RUN docker pull searxng/searxng:latest
+
+USER 1000
 
 CMD ["--tail-log"]
