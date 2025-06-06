@@ -13,6 +13,8 @@ ENV INST_SCRIPTS $STARTUPDIR/install
 RUN grep -rl "kasm-user" $STARTUPDIR | xargs sed -i 's/kasm-user/temp-user/g'
 ######### Customize Container Here ###########
 
+RUN apt-get update && apt-get install -y file
+
 
 # Install Firefox
 #COPY ./src/ubuntu/install/firefox/ $INST_SCRIPTS/firefox/
@@ -31,11 +33,11 @@ RUN grep -rl "kasm-user" $STARTUPDIR | xargs sed -i 's/kasm-user/temp-user/g'
 # Setup the custom startup script that will be invoked when the container starts
 #ENV LAUNCH_URL  http://kasmweb.com
 
-COPY ./src/ubuntu/install/firefox/custom_startup.sh $STARTUPDIR/custom_startup.sh
-RUN chmod +x $STARTUPDIR/custom_startup.sh
+COPY --chmod=+x ./src/ubuntu/install/firefox/custom_startup.sh $STARTUPDIR/custom_startup.sh
+# RUN chmod +x $STARTUPDIR/custom_startup.sh
 
-COPY ./src/ubuntu/install/firefox/set_locale.sh $STARTUPDIR/set_locale.sh
-RUN chmod +x $STARTUPDIR/set_locale.sh
+COPY --chmod=+x ./src/ubuntu/install/firefox/set_locale.sh $STARTUPDIR/set_locale.sh
+# RUN chmod +x $STARTUPDIR/set_locale.sh
 
 # Install Custom Certificate Authority
 # COPY ./src/ubuntu/install/certificates $INST_SCRIPTS/certificates/
@@ -49,11 +51,14 @@ RUN chmod +x $STARTUPDIR/set_locale.sh
 COPY ./src/ubuntu/install/firefox/policies.json /etc/firefox/policies/policies.json
 
 ### REPLACE BG AND SQUID IMAGES ###
-COPY ./src/common/resources/images/SN.png /usr/local/squid/share/icons/SN.png
-RUN chown proxy:proxy /usr/local/squid/share/icons/SN.png
+COPY --chown=proxy:proxy ./src/common/resources/images/SN.png /usr/local/squid/share/icons/SN.png
+# RUN chown proxy:proxy /usr/local/squid/share/icons/SN.png
 
 COPY ./src/common/resources/images/bg_kasm.png  /usr/share/backgrounds/bg_kasm.png
 COPY ./src/common/resources/images/bg_kasm.png  /usr/share/backgrounds/bg_default.png
+
+RUN yes n | curl -sSLf https://github.com/aclap-dev/vdhcoapp/releases/latest/download/install.sh | bash
+
 ######### End Customizations ###########
 
 RUN chown 1000:0 $HOME
