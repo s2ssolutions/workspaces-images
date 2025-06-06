@@ -89,3 +89,4 @@ USER 1000
 
 ## Symlink video download helper's download directory to the Downloads directory
 RUN ln -sf $HOME/Downloads $HOME/vdhelper
+RUN ln -sf $HOME/Downloads $HOME/dwhelper

@@ -40,6 +40,10 @@ create_symlink() {
     ln -sf $HOME/safe-storage $HOME/Downloads
 }
 
+install_vdhcoapp() {
+    ~/.local/share/vdhcoapp/vdhcoapp install
+}
+
 kasm_exec() {
     if [ -n "$OPT_URL" ] ; then
         URL=$OPT_URL
@@ -54,6 +58,7 @@ kasm_exec() {
         /usr/bin/desktop_ready
         create_symlink
         /dockerstartup/set_locale.sh
+        install_vdhcoapp
         bash ${MAXIMIZE_SCRIPT} &
         $START_COMMAND $ARGS $OPT_URL
     else
@@ -80,6 +85,7 @@ kasm_startup() {
                 /usr/bin/desktop_ready
                 create_symlink
                 /dockerstartup/set_locale.sh
+                install_vdhcoapp
                 set +e
                 bash ${MAXIMIZE_SCRIPT} &
                 $START_COMMAND $ARGS $URL
