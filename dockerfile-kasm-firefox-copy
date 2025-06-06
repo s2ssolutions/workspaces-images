@@ -59,6 +59,8 @@ COPY ./src/common/resources/images/bg_kasm.png  /usr/share/backgrounds/bg_defaul
 
 RUN yes n | curl -sSLf https://github.com/aclap-dev/vdhcoapp/releases/latest/download/install.sh | bash
 
+
+
 ######### End Customizations ###########
 
 RUN chown 1000:0 $HOME
@@ -83,5 +85,7 @@ RUN chown -R temp-user:temp-user $HOME/.mozilla
 ### Override default ua string ###
 RUN echo 'user_pref("general.useragent.override", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.1");' >> $HOME/.mozilla/firefox/kasm/prefs.js
 
-
 USER 1000
+
+## Symlink video download helper's download directory to the Downloads directory
+RUN ln -sf $HOME/Downloads $HOME/vdhelper
